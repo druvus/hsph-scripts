@@ -35,5 +35,5 @@ SRR<- conversion$run
 
 #Download fastq files
 getSRAfile( SRR, sra_con, fileType = "fastq")
-getSRAfile( SRR, sra_con, fileType = "srr")
+getSRAfile( SRR, sra_con, fileType = "sra")
 
