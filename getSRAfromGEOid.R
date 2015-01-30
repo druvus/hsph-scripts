@@ -1,9 +1,12 @@
 library(GEOquery)
 library(SRAdb)
-datadir <- "/PATH/SRA"
+
+datadir <- “PATH”
 GEOfile <- "GEOid.txt"
 
+#Set working directory
 setwd(datadir)
+
 SRA <- c()
 
 #Download SRA database
@@ -25,15 +28,20 @@ for (i in as.character(GEOids[,1])){
   SRA <- c(SRA, SRX)
 
 }
-SRA <- sort(unique(SRA))
+
 
 #Get a conversion table
 conversion <- sraConvert( SRA, sra_con = sra_con )
+metadata <- data.frame(GEO=GEOids[,1], conversion)
+
+
+#Export metadata to file
+write.table(metadata, file = "metadata.txt", append = FALSE, quote = FALSE, sep = "\t", row.names = F )
 
 #Get the run ids
-SRR<- conversion$run
+SRR<- unique(conversion$run)
 
 #Download fastq files
 getSRAfile( SRR, sra_con, fileType = "fastq")
-getSRAfile( SRR, sra_con, fileType = "sra")
+#getSRAfile( SRR, sra_con, fileType = "sra")
 
