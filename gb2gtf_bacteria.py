@@ -72,7 +72,20 @@ def gb2gtf( source='gb2gtf',allowedTypes=set(['gene','CDS','tRNA','tmRNA','rRNA'
       #code strand as +/- (in genbank 1 or -1)
       if int(f.strand)>0: strand = '+'
       else:               strand = '-'
-      
+
+      #Define source
+      if f.type == 'CDS':
+        source = 'protein_coding'
+        f.type = 'exon'
+      if f.type == 'tRNA':
+        source = 'tRNA'
+      if f.type == 'tmRNA':
+        source = 'tmRNA'
+      if f.type == 'rRNA':
+        source = 'rRNA'
+      if f.type == 'ncRNA':
+        source = 'ncRNA'
+        
       #define gb
       """
       seqname - The name of the sequence. Must be a chromosome or scaffold.
@@ -85,14 +98,17 @@ def gb2gtf( source='gb2gtf',allowedTypes=set(['gene','CDS','tRNA','tmRNA','rRNA'
       frame - If the feature is a coding exon, frame should be a number between 0-2 that represents the reading frame of the first base. If the feature is not a coding exon, the value should be '.'.
       comments - gene_id "Em:U62317.C22.6.mRNA"; transcript_id "Em:U62317.C22.6.mRNA"; exon_number 1
       """
-      gtf = '%s\t%s\t%s\t%s\t%s\t.\t%s\t.\t%s' % ( acc,source,f.type,f.location.start.position+1,f.location.end.position,strand,comments ) #f.frame,
-      print gtf
-      
-      if f.type == 'CDS':
-        #f.type = 'exon'
+
+      if f.type == 'gene':
+        continue
+      elif f.type == 'CDS':
+        continue
+      else:
         comments += ';  exon_number "1"'
         gtf_exon = '%s\t%s\t%s\t%s\t%s\t.\t%s\t.\t%s' % ( acc,source,'exon',f.location.start.position+1,f.location.end.position,strand,comments )
         print gtf_exon
+        #gtf = '%s\t%s\t%s\t%s\t%s\t.\t%s\t.\t%s' % ( acc,source,f.type,f.location.start.position+1,f.location.end.position,strand,comments ) #f.frame,
+        #print gtf
       
     sys.stderr.write( "%s\tSkipped %s entries having types: %s.\n" % ( gb.id,skipped,', '.join(skippedTypes) ) )
 
