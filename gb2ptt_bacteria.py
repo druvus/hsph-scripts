@@ -53,9 +53,8 @@ def gb2gtf( source='gb2gtf',allowedTypes=set(['CDS']) ):
       elif 'gene' in f.qualifiers:
         gene_id = f.qualifiers['gene'][0]
         transcript_id = 'T' + gene_id
-
       elif 'label' in f.qualifiers:
-        gene_id = f.qualifiers['label'][0]
+        gene_id = f.qualifiers['label'][0].replace(" ", ".")
         transcript_id = 'T' + gene_id
     
       comments = 'gene_id "%s"; transcript_id "%s"' % ( gene_id,transcript_id )
@@ -64,6 +63,11 @@ def gb2gtf( source='gb2gtf',allowedTypes=set(['CDS']) ):
         gene_name = f.qualifiers['gene'][0]
         comments += '; gene_name "%s"' % f.qualifiers['gene'][0]
         comments += '; transcript_name "%s-1"' % f.qualifiers['gene'][0]
+      elif 'label' in f.qualifiers:
+        gene_name = f.qualifiers['label'][0]
+        comments += '; gene_name "%s"' % f.qualifiers['label'][0].replace(" ", ".")
+        comments += '; transcript_name "%s-1"' % f.qualifiers['label'][0].replace(" ", ".")
+        
       if 'protein_id' in f.qualifiers:
         comments += '; protein_id "%s"' % f.qualifiers['protein_id'][0]
 
