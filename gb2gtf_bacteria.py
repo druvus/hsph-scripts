@@ -42,7 +42,7 @@ def gb2gtf( source='gb2gtf',allowedTypes=set(['gene','CDS','tRNA','tmRNA','rRNA'
         skippedTypes.add( f.type )
         continue
       
-      #generate comments field
+      #Extract gene id and transcript id to generate comments field 
       if 'locus_tag' in f.qualifiers:
         #use locul tag as gene_id/transcript_id
         gene_id = f.qualifiers['locus_tag'][0]
@@ -50,17 +50,20 @@ def gb2gtf( source='gb2gtf',allowedTypes=set(['gene','CDS','tRNA','tmRNA','rRNA'
       elif 'gene' in f.qualifiers:
         gene_id = f.qualifiers['gene'][0]
         transcript_id = 'T' + gene_id
-        #sys.stderr.write( "Error: Neither `gene` nor `locus_tag` found for entry: %s\n" % '; '.join( str(f).split('\n') ) )
-        #continue
       elif 'label' in f.qualifiers:
-        gene_id = f.qualifiers['label'][0]
+        gene_id = f.qualifiers['label'][0].replace(" ", ".")
         transcript_id = 'T' + gene_id
-    
+
+      #Extract gene name and transcript name to generate comments field 
       comments = 'gene_id "%s"; transcript_id "%s"' % ( gene_id,transcript_id )
         
       if 'gene' in f.qualifiers:
         comments += '; gene_name "%s"' % f.qualifiers['gene'][0]
         comments += '; transcript_name "%s-1"' % f.qualifiers['gene'][0]
+      elif 'label' in f.qualifiers:
+        comments += '; gene_name "%s"' % f.qualifiers['label'][0].replace(" ", ".")
+        comments += '; transcript_name "%s-1"' % f.qualifiers['label'][0].replace(" ", ".")
+        
       if 'protein_id' in f.qualifiers:
         comments += '; protein_id "%s"' % f.qualifiers['protein_id'][0]
       
